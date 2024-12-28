@@ -17,9 +17,9 @@ ARCH=x86_64
 
 #Check if architecture is aarch64
 
-if [ `uname -p` == "aarch64" ]; then
+if [ `uname -p` = "aarch64" ]; then
     ARCH=aarch64
-fi    
+fi
 
 AGENT_FLAGS=
 
