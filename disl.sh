@@ -6,9 +6,10 @@ if [ "$#" -ne 1 ]; then
 fi
 
 ant clean
-echo "cleaned"
+echo "> cleaned"
 ant -Ddislclass=ex"$1".Instrumentation
 ./startDiSLServer.sh
 sleep 2
-echo "server started"
+echo "> server started"
+echo "> running ex $1"
 ./runInstrumented.sh ex"$1".Main
