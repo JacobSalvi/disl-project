@@ -12,8 +12,9 @@ public class Instrumentation {
     static void afterMethodFoo(DynamicContext dc) {
         int input = dc.getMethodArgumentValue(0, int.class);
         int[] out = (int[]) dc.getStackValue(0, Object.class);
-        System.out.println("Input: " + input + " - Output: " + Arrays.toString(out));
+//        System.out.println("Input: " + input + " - Output: " + Arrays.toString(out));
         // is the Fibonacci sequence
+        Profiler.addToQueue(input, out);
     }
 
 }
