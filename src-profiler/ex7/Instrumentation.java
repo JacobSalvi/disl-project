@@ -3,6 +3,8 @@ package ex7;
 import ch.usi.dag.disl.marker.BytecodeMarker;
 import ch.usi.dag.disl.dynamiccontext.DynamicContext;
 import ch.usi.dag.disl.annotation.Before;
+import ch.usi.dag.disl.annotation.After;
+import ch.usi.dag.disl.annotation.ThreadLocal;
 
 public class Instrumentation {
 
@@ -14,7 +16,7 @@ public class Instrumentation {
        Profiler.addArrayInformation(size, arg);
     }
 
-
+    // Solution to exercise 7 using custom context
     @Before(marker=BytecodeMarker.class, args="anewarray", scope="ex7.MainThread.*")
     public static void arrayObjectAllocation(DynamicContext dc, CustomContext cc) {
         int size = dc.getStackValue(0, int.class);
@@ -22,6 +24,26 @@ public class Instrumentation {
         Profiler.addANewArrayInformation(size, argType);
 
     }
+
+
+    // Solution to exercise 7 without using a custom context
+    /*
+    @ThreadLocal
+    static int arraySize;
+
+    @Before(marker=BytecodeMarker.class, args="anewarray", scope="ex7.MainThread.*")
+    public static void arrayObjectAllocationSize(DynamicContext dc, CustomContext cc) {
+        int size = dc.getStackValue(0, int.class);
+        arraySize = size;
+    }
+
+
+    @After(marker=BytecodeMarker.class, args="anewarray", scope="ex7.MainThread.*")
+    public static void arrayObjectAllocationType(DynamicContext dc, CustomContext cc) {
+        Object obj = dc.getStackValue(0, Object.class);
+        Profiler.addANewArrayInformationNoCustomContext(arraySize, obj);
+    }
+    */
 
     @Before(marker=BytecodeMarker.class, args="multianewarray", scope="ex7.MainThread.*")
     public static void multiArrayAllocation(DynamicContext dc, CustomContext cc) {

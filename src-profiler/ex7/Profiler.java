@@ -19,8 +19,20 @@ public class Profiler {
         descriptionToCount.computeIfAbsent(desc, (k) -> new LongAdder()).increment();
     }
 
+    // This is needed for the solution to exercise 7 which does not use
+    public static void addANewArrayInformationNoCustomContext(int size, Object argType) {
+        ArrayList<Integer> dim = new ArrayList<>();
+        dim.add(size);
+        String typeName = argType.getClass().getName();
+        typeName = typeName.substring(2, typeName.length() - 1);
+        Description desc = new Description(typeName, dim);
+        descriptionToCount.computeIfAbsent(desc, (k) -> new LongAdder()).increment();
+    }
+
+
     public static void addNewMultiArrayInfo(int[] dimensions, String argType) {
         ArrayList<Integer> dim = Arrays.stream(dimensions).boxed().collect(Collectors.toCollection(ArrayList::new));
+        // Remove the [ symbol, the L and the final ; which are present in array type.
         Description desc = new Description(argType.substring(dimensions.length + 1, argType.length()-1), dim);
         descriptionToCount.computeIfAbsent(desc, (k) -> new LongAdder()).increment();
     }
