@@ -20,7 +20,9 @@ public class Profiler {
         }));
     }
 
-    public static void addInfo(String name, int depth) {
+    public static void addInfo(Throwable t) {
+        String name = t.getClass().getName();
+        int depth = t.getStackTrace().length;
         exceptionsUsage.computeIfAbsent(name, (k) -> new LongAdder()).increment();
         averageDepth.computeIfAbsent(name, (k) -> new ConcurrentLinkedDeque<>()).add(depth);
     }
