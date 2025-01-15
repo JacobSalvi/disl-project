@@ -19,7 +19,7 @@ public class Profiler {
         descriptionToCount.computeIfAbsent(desc, (k) -> new LongAdder()).increment();
     }
 
-    // This is needed for the solution to exercise 7 which does not use
+    // This is needed for the solution to exercise 7 which does not use the CustomContext
     public static void addANewArrayInformationNoCustomContext(int size, Object argType) {
         ArrayList<Integer> dim = new ArrayList<>();
         dim.add(size);
