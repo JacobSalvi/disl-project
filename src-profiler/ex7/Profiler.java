@@ -2,10 +2,8 @@ package ex7;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.LongAdder;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 public class Profiler {

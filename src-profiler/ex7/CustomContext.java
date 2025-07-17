@@ -1,26 +1,27 @@
 package ex7;
 
 import ch.usi.dag.disl.staticcontext.InstructionStaticContext;
-import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.TypeInsnNode;
-import org.objectweb.asm.tree.IntInsnNode;
-import org.objectweb.asm.tree.InsnNode;
-import org.objectweb.asm.tree.MultiANewArrayInsnNode;
 
-import javax.xml.transform.Source;
+import java.lang.classfile.CodeElement;
+import java.lang.classfile.Instruction;
+import java.lang.classfile.Opcode;
+import java.lang.classfile.instruction.*;
+import java.util.List;
 
 public class CustomContext extends InstructionStaticContext{
 
     public record ArrayInfo(String desc, int dimensions){}
 
     public int getArgument(){
-        InsnList list = staticContextData.getMethodNode().instructions;
+        List<CodeElement> list = staticContextData.getMethodModel().instructions();
         int index = this.getIndex();
-        AbstractInsnNode node = list.get(index);
+        CodeElement node = list.get(index);
         switch(node){
-            case IntInsnNode n -> {
-                return n.operand;
+            case ConstantInstruction.ArgumentConstantInstruction n -> {
+                return n.constantValue();
+            }
+            case NewPrimitiveArrayInstruction n -> {
+                return n.typeKind().newarrayCode();
             }
             default -> {}
         }
@@ -28,15 +29,21 @@ public class CustomContext extends InstructionStaticContext{
     }
 
     public String getType(){
-        InsnList list = staticContextData.getMethodNode().instructions;
+        List<CodeElement> list = staticContextData.getMethodModel().instructions();
         int index = this.getIndex();
-        AbstractInsnNode node = list.get(index);
+        CodeElement node = list.get(index);
         switch(node){
-            case TypeInsnNode n -> {
-                return n.desc;
+            case NewObjectInstruction n -> {
+                return n.className().asSymbol().descriptorString();
             }
-            case MultiANewArrayInsnNode n -> {
-                return n.desc;
+            case NewReferenceArrayInstruction n -> {
+                return n.componentType().asSymbol().descriptorString();
+            }
+            case TypeCheckInstruction n -> {
+                return n.type().asSymbol().descriptorString();
+            }
+            case NewMultiArrayInstruction n -> {
+                return n.arrayType().asSymbol().descriptorString();
             }
             default -> {}
         }
@@ -44,12 +51,12 @@ public class CustomContext extends InstructionStaticContext{
     }
 
     public int getDimension() {
-        InsnList list = staticContextData.getMethodNode().instructions;
+        List<CodeElement> list = staticContextData.getMethodModel().instructions();
         int index = this.getIndex();
-        AbstractInsnNode node = list.get(index);
+        CodeElement node = list.get(index);
         switch(node){
-            case MultiANewArrayInsnNode n -> {
-                return n.dims;
+            case NewMultiArrayInstruction n -> {
+                return n.dimensions();
             }
             default -> {}
         }
@@ -57,12 +64,12 @@ public class CustomContext extends InstructionStaticContext{
     }
 
     public boolean isAnewArray() {
-        InsnList list = staticContextData.getMethodNode().instructions;
+        List<CodeElement> list = staticContextData.getMethodModel().instructions();
         int index = this.getIndex();
         for (int i = 0; i < 4; i++) {
-            AbstractInsnNode node = list.get(index);
-            if(node.getOpcode() == 197) {
-                return true;
+            CodeElement node = list.get(index);
+            if (node instanceof Instruction instruction) {
+                return instruction.opcode() == Opcode.ANEWARRAY;
             }
         }
         return false;
@@ -71,49 +78,49 @@ public class CustomContext extends InstructionStaticContext{
     // this might seem redundant, but we couldn't use the dynamic context getStackValue because we got the out of bound (of the stack) error
     // and we need yo have 4 different functions since we cannot pass a parameter here.
     public int getDimension1() {
-        InsnList list = staticContextData.getMethodNode().instructions;
+        List<CodeElement> list = staticContextData.getMethodModel().instructions();
         int index = this.getIndex();
-        AbstractInsnNode node = list.get(index - 1);
-        if (node.getOpcode() >= 3 && node.getOpcode() <= 8) {
-            return node.getOpcode() - 3; // this instruction is a iconst_x, so we return the value of the constant
-        } else if (node instanceof IntInsnNode && node.getOpcode() == 16) {
-            return ((IntInsnNode) node).operand;  // if is a bipush we return the operand
+        CodeElement node = list.get(index - 1);
+        if (node instanceof ConstantInstruction constantInstruction) {
+            if (constantInstruction.constantValue() instanceof Integer integer) {
+                return integer;
+            }
         }
         return 0;
     }
 
     public int getDimension2() {
-        InsnList list = staticContextData.getMethodNode().instructions;
+        List<CodeElement> list = staticContextData.getMethodModel().instructions();
         int index = this.getIndex();
-        AbstractInsnNode node = list.get(index - 2);
-        if (node.getOpcode() >= 3 && node.getOpcode() <= 8) {
-            return node.getOpcode() - 3; // this instruction is a iconst_x, so we return the value of the constant
-        } else if (node instanceof IntInsnNode && node.getOpcode() == 16) {
-            return ((IntInsnNode) node).operand;  // if is a bipush we return the operand
+        CodeElement node = list.get(index - 2);
+        if (node instanceof ConstantInstruction constantInstruction) {
+            if (constantInstruction.constantValue() instanceof Integer integer) {
+                return integer;
+            }
         }
         return 0;
     }
 
     public int getDimension3() {
-        InsnList list = staticContextData.getMethodNode().instructions;
+        List<CodeElement> list = staticContextData.getMethodModel().instructions();
         int index = this.getIndex();
-        AbstractInsnNode node = list.get(index - 3);
-        if (node.getOpcode() >= 3 && node.getOpcode() <= 8) {
-            return node.getOpcode() - 3; // this instruction is a iconst_x, so we return the value of the constant
-        } else if (node instanceof IntInsnNode && node.getOpcode() == 16) {
-            return ((IntInsnNode) node).operand;  // if is a bipush we return the operand
+        CodeElement node = list.get(index - 3);
+        if (node instanceof ConstantInstruction constantInstruction) {
+            if (constantInstruction.constantValue() instanceof Integer integer) {
+                return integer;
+            }
         }
         return 0;
     }
 
     public int getDimension4() {
-        InsnList list = staticContextData.getMethodNode().instructions;
+        List<CodeElement> list = staticContextData.getMethodModel().instructions();
         int index = this.getIndex();
-        AbstractInsnNode node = list.get(index - 4);
-        if (node.getOpcode() >= 3 && node.getOpcode() <= 8) {
-            return node.getOpcode() - 3; // this instruction is a iconst_x, so we return the value of the constant
-        } else if (node instanceof IntInsnNode && node.getOpcode() == 16) {
-            return ((IntInsnNode) node).operand;  // if is a bipush we return the operand
+        CodeElement node = list.get(index - 4);
+        if (node instanceof ConstantInstruction constantInstruction) {
+            if (constantInstruction.constantValue() instanceof Integer integer) {
+                return integer;
+            }
         }
         return 0;
     }

@@ -1,9 +1,7 @@
 package ex4;
 
-import java.util.OptionalDouble;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.concurrent.atomic.LongAccumulator;
 import java.util.concurrent.atomic.LongAdder;
 
 public class Profiler {
