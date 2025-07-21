@@ -40,6 +40,7 @@
 		<delete dir="build" />
 		<delete dir="dump" />
 		<delete dir="bin-app" />
+		<delete dir="instrumented" />
 	</target>
 
 </project>
