@@ -29,7 +29,5 @@ AGENT_EXT=.so
 
 
 AGENT_FLAGS="$AGENT_FLAGS --patch-module java.base=lib/disl-bypass.jar --add-exports java.base/ch.usi.dag.disl.dynamicbypass=ALL-UNNAMED"
-echo "agent flags"
-echo "$AGENT_FLAGS"
-
+# -Xlog:all=trace
 $JAVA_HOME/bin/java --enable-preview -agentpath:lib/libdislagent$AGENT_EXT $AGENT_FLAGS -Xbootclasspath/a:lib/disl-bypass.jar:build/profiler.jar -cp build/app.jar -noverify $1
