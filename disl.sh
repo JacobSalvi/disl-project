@@ -8,12 +8,12 @@ fi
 ant clean
 echo "> cleaned"
 
-start_time=$(($(date +%s%N)))
 ant -Ddislclass=ex"$1".Instrumentation
 ./startDiSLServer.sh
 sleep 2
 echo "> server started"
 echo "> running ex $1"
+start_time=$(($(date +%s%N)))
 ./runInstrumented.sh ex"$1".Main
 end_time=$(($(date +%s%N)))
 elapsed="$(($end_time-$start_time))"
